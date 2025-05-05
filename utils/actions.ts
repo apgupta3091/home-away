@@ -109,7 +109,7 @@ export const updateProfileAction = async (
 };
 
 export const updateProfileImageAction = async (
-  prevState: any,
+  prevState: unknown,
   formData: FormData
 ): Promise<{ message: string }> => {
   const user = await getAuthUser();
@@ -134,7 +134,7 @@ export const updateProfileImageAction = async (
 };
 
 export const createPropertyAction = async (
-  prevState: any,
+  prevState: unknown,
   formData: FormData
 ): Promise<{ message: string }> => {
   const user = await getAuthUser();
@@ -234,3 +234,26 @@ export const toggleFavoriteAction = async (prevState: {
     return renderError(error);
   }
 };
+
+export const fetchFavorites = async () => {
+  const user = await getAuthUser();
+  const favorites = db.favorite.findMany({
+    where: {
+      profileId: user.id,
+    },
+    select: {
+      property: {
+        select: {
+          id: true,
+          name: true,
+          tagline: true,
+          country: true,
+          price: true,
+          image: true,
+
+        }
+      }
+    }
+  })
+  return (await favorites).map((favorite) => favorite.property);
+}
